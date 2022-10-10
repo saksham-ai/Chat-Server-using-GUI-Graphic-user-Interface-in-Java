@@ -1,0 +1,65 @@
+import java.io.*;
+import java.awt.*;
+import java.awt.event.*;
+import java.net.ServerSocket;
+import java.net.Socket;
+import javax.swing.*;
+ class GUI_server {
+    JFrame f=new JFrame("Server");
+    TextField ta=new TextField();
+    List l=new List();
+    JButton b=new JButton("SEND");
+    ServerSocket ss;
+    Socket s;
+    GUI_server(){
+        f.setVisible(true);
+        f.setSize(400,400);
+        ta.setSize(400,50);
+        f.add(ta,BorderLayout.NORTH);
+        f.add(l,BorderLayout.CENTER);
+        f.add(b,BorderLayout.SOUTH);
+        f.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                f.dispose();
+
+            }
+        });
+        b.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                try {
+                    BufferedReader  br=new BufferedReader(new InputStreamReader(System.in));
+                    ObjectOutputStream oos=new ObjectOutputStream(s.getOutputStream());
+                    String str=ta.getText();
+                    oos.writeObject(str);
+                    System.out.println("hello");
+                    l.add("Me~ "+str);
+                } catch (Exception ex) {
+                    System.out.println(ex.getMessage());
+
+                }
+
+            }
+        });
+
+        try {
+            ss=new ServerSocket(2000);
+            s=ss.accept();
+            while (true){
+                ObjectInputStream ois=new ObjectInputStream(s.getInputStream());
+                String data=ois.readObject().toString();
+                l.add("Friend~"+data);
+
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    public static void main(String[] args) {
+        new GUI_server();
+    }
+
+}
